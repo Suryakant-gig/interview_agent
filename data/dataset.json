@@ -1,0 +1,442 @@
+[
+  {
+    "question": "What are autoencoders? Explain the different layers of autoencoders and mention three practical usages of them?",
+    "ideal_answer": "Autoencoders are one of the deep learning types used for unsupervised learning. There are key layers of autoencoders, which are the input layer, encoder, bottleneck hidden layer, decoder, and output. The three layers of the autoencoder are:-\n1) Encoder - Compresses the input data to an encoded representation which is typically much smaller than the input data.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What is an activation function and discuss the use of an activation function? Explain three different types of activation functions?",
+    "ideal_answer": "In mathematical terms, the activation function serves as a gate between the current neuron input and its output, going to the next level. Basically, it decides whether neurons should be activated or not. It is used to introduce non-linearity into a model.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "You are using a deep neural network for a prediction task. After training your model, you notice that it is strongly overfitting the training set and that the performance on the test isn\u2019t good. What can you do to reduce overfitting? ###\n\nTo reduce overfitting in a deep neural network changes can be made in three places/stages: The input data to the network, the network architecture, and the training process:\n\n1. The input data to the network:\n\n Check if all the features are available and reliable\n Check if the training sample distribution is the same as the validation and test set distribution. Because if there is a difference in validation set distribution then it is hard for the model to predict as these complex patterns are unknown to the model.\n Check for train / valid data contamination (or leakage)\n The dataset size is enough, if not try data augmentation to increase the data size\n The dataset is balanced\n\n2. Network architecture:\n Overfitting could be due to model complexity. Question each component:\n   can fully connect layers be replaced with convolutional + pooling layers?\n   what is the justification for the number of layers and number of neurons chosen? Given how hard it is to tune these, can a pre-trained model be used?\n   Add regularization - lasso (l1), ridge (l2), elastic net (both)\n Add dropouts\n Add batch normalization\n\n3. The training process:\n Improvements in validation losses should decide when to stop training. Use callbacks for early stopping when there are no significant changes in the validation loss and restore_best_weights.\n\n### Q4: Why should we use Batch Normalization? ###\n\nBatch normalization is a technique for training very deep neural networks that standardizes the inputs to a layer for each mini-batch.\n\nUsually, a dataset is fed into the network in the form of batches where the distribution of the data differs for every batch size. By doing this, there might be chances of vanishing gradient or exploding gradient when it tries to backpropagate. In order to combat these issues, we can use BN (with irreducible error) layer mostly on the inputs to the layer before the activation function in the previous layer and after fully connected layers.\n\n\nBatch Normalisation has the following effects on the Neural Network:\n\n1. Robust Training of the deeper layers of the network.\n2. Better covariate-shift proof NN Architecture.\n3. Has a slight regularisation effect.\n4. Centred and Controlled values of Activation.\n5. Tries to Prevent exploding/vanishing gradient.\n6. Faster Training/Convergence to the minimum loss function\n\n\n\n### Q5: How to know whether your model is suffering from the problem of Exploding Gradients? ###\n\nBy taking incremental steps towards the minimal value, the gradient descent algorithm aims to minimize the error. The weights and biases in a neural network are updated using these processes. However, at times, the steps grow excessively large, resulting in increased updates to weights and bias terms to the point where the weights overflow (or become NaN, that is, Not a Number). An exploding gradient is the result of this, and it is an unstable method.\n\nThere are some subtle signs that you may be suffering from exploding gradients during the training of your network, such as:\n\n1. The model is unable to get traction on your training data (e g. poor loss).\n2. The model is unstable, resulting in large changes in loss from update to update.\n3. The model loss goes to NaN during training.\n\nIf you have these types of problems, you can dig deeper to see if you have a problem with exploding gradients. There are some less subtle signs that you can use to confirm that you have exploding gradients:\n\n1. The model weights quickly become very large during training.\n2. The model weights go to NaN values during training.\n3. The error gradient values are consistently above 1.0 for each node and layer during training.\n\n### Q6: Can you name and explain a few hyperparameters used for training a neural network?",
+    "ideal_answer": "Hyperparameters are any parameter in the model that affects the performance but is not learned from the data unlike parameters ( weights and biases), the only way to change it is manually by the user. 1. Number of nodes: number of inputs in each layer.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Can you explain the parameter sharing concept in deep learning?",
+    "ideal_answer": "Parameter sharing is the method of sharing weights by all neurons in a particular feature map. Therefore helps to reduce the number of parameters in the whole system, making it computationally cheap. It basically means that the same parameters will be used to represent different transformations in the system.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Describe the architecture of a typical Convolutional Neural Network (CNN)?",
+    "ideal_answer": "In a typical CNN architecture, a few convolutional layers are connected in a cascade style. Each convolutional layer is followed by a Rectified Linear Unit (ReLU) layer or other activation function, then a pooling layer, then one or more convolutional layers (+ReLU), then another pooling layer. The output from each convolution layer is a set of objects called feature maps, generated by a single kernel filter.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What is the Vanishing Gradient Problem in Artificial Neural Networks and How to fix it?",
+    "ideal_answer": "The vanishing gradient problem is encountered in artificial neural networks with gradient-based learning methods and backpropagation. In these learning methods, each of the weights of the neural network receives an update proportional to the partial derivative of the error function with respect to the current weight in each iteration of training. Sometimes when gradients become vanishingly small, this prevents the weight to change value.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "When it comes to training an artificial neural network, what could be the reason why the loss doesn't decrease in a few epochs?",
+    "ideal_answer": "Some of the reasons why the loss doesn't decrease after a few Epochs are:\n\na) The model is under-fitting the training data. b) The learning rate of the model is large. c) The initialization is not proper (like all the weights initialized with 0 doesn't make the network learn any function)\n\nd) The Regularisation hyper-parameter is quite large.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Why Sigmoid or Tanh is not preferred to be used as the activation function in the hidden layer of the neural network?",
+    "ideal_answer": "A common problem with Tanh or Sigmoid functions is that they saturate. Once saturated, the learning algorithms cannot adapt to the weights and enhance the performance of the model. Thus, Sigmoid or Tanh activation functions prevent the neural network from learning effectively leading to a vanishing gradient problem.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Discuss in what context it is recommended to use transfer learning and when it is not.",
+    "ideal_answer": "Transfer learning is a machine learning method where a model developed for a task is reused as the starting point for a model on a second task. It is a popular approach in deep learning where pre-trained models are used as the starting point for computer vision and natural language processing tasks given the vast computing and time resources required to develop neural network models on these problems and from the huge jumps in a skill that they provide on related problems. Transfer learning is used for tasks where the data is too little to train a full-scale model from the beginning.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Discuss the vanishing gradient in RNN and How they can be solved.",
+    "ideal_answer": "In Sequence to Sequence models such as RNNs, the input sentences might have long-term dependencies for example we might say \"The boy who was wearing a red t-shirt, blue jeans, black shoes, and a white cap and who lives at. and is 10 years old. etc, is genius\" here the verb (is) in the sentence depends on the (boy) i.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What are the main gates in LSTM and what are their tasks?",
+    "ideal_answer": "There are 3 main types of gates in a LSTM Model, as follows:\n- Forget Gate\n- Input/Update Gate\n- Output Gate\n1) Forget Gate:- It helps in deciding which data to keep or thrown out\n2) Input Gate:- it helps in determining whether new data should be added in long term memory cell given by previous hidden state and new input data \n3) Output Gate:- this gate gives out the new hidden state\n\nCommon things for all these gates are they all take take inputs as the current temporal state/input/word/observation and the previous hidden state output and sigmoid activation is mostly used in all of these.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Is it a good idea to use CNN to classify\u00a01D\u00a0signal?",
+    "ideal_answer": "For time-series data, where we assume temporal dependence between the values, then convolutional neural networks (CNN) are one of the possible approaches. However the most popular approach to such data is to use recurrent neural networks (RNN), but you can alternatively use CNNs, or a hybrid approach (quasi-recurrent neural networks, QRNN). With CNN, you would use sliding windows of some width, that would look at certain (learned) patterns in the data, and stack such windows on top of each other, so that higher-level windows would look for patterns within the lower-level patterns.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "How does L1/L2 regularization affect a neural network?",
+    "ideal_answer": "Overfitting occurs in more complex neural network models (many layers, many neurons) and the complexity of the neural network can be reduced by using L1 and L2 regularization as well as dropout , Data augmenration and Dropaout. L1 regularization forces the weight parameters to become zero. L2 regularization forces the weight parameters towards zero (but never exactly zero|| weight deccay )\n\nSmaller weight parameters make some neurons neglectable therfore neural network becomes less complex and less overfitting.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "\ud835\udc07\ud835\udc28\ud835\udc30 \ud835\udc30\ud835\udc28\ud835\udc2e\ud835\udc25\ud835\udc1d \ud835\udc32\ud835\udc28\ud835\udc2e \ud835\udc1c\ud835\udc21\ud835\udc1a\ud835\udc27\ud835\udc20\ud835\udc1e \ud835\udc1a \ud835\udc29\ud835\udc2b\ud835\udc1e-\ud835\udc2d\ud835\udc2b\ud835\udc1a\ud835\udc22\ud835\udc27\ud835\udc1e\ud835\udc1d \ud835\udc27\ud835\udc1e\ud835\udc2e\ud835\udc2b\ud835\udc1a\ud835\udc25 \ud835\udc27\ud835\udc1e\ud835\udc2d\ud835\udc30\ud835\udc28\ud835\udc2b\ud835\udc24 \ud835\udc1f\ud835\udc2b\ud835\udc28\ud835\udc26 \ud835\udc1c\ud835\udc25\ud835\udc1a\ud835\udc2c\ud835\udc2c\ud835\udc22\ud835\udc1f\ud835\udc22\ud835\udc1c\ud835\udc1a\ud835\udc2d\ud835\udc22\ud835\udc28\ud835\udc27 \ud835\udc2d\ud835\udc28 \ud835\udc2b\ud835\udc1e\ud835\udc20\ud835\udc2b\ud835\udc1e\ud835\udc2c\ud835\udc2c\ud835\udc22\ud835\udc28\ud835\udc27?",
+    "ideal_answer": "Using transfer learning where we can use our knowledge about one task to do another. First set of layers of a neural network are usually feature extraction layers and will be useful for all tasks with the same input distribution. So, we should replace the last fully connected layer and Softmax responsible for classification with one neuron for regression-or fully connected-layer for correction then one neuron for regression.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What might happen if you set the momentum hyperparameter too close to 1 (e.g., 0.9999) when using an SGD optimizer?",
+    "ideal_answer": "If the momentum hyperparameter is set too close to 1 (e. g. , 0.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What are the hyperparameters that can be optimized for the batch normalization layer?",
+    "ideal_answer": "The $\\gamma$ and $\\beta$ hyperparameters for the batch normalization layer are learned end to end by the network. In batch-normalization, the outputs of the intermediate layers are normalized to have a mean of 0 and standard deviation of 1. Rescaling by $\\gamma$ and shifting by $\\beta$ helps us change the mean and standard deviation to other values.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What is the effect of dropout on the training and prediction speed of your deep learning model?",
+    "ideal_answer": "Dropout is a regularization technique, which zeroes down some weights and scales up the rest of the weights by a factor of 1/(1-p). Let's say if Dropout layer is initialized with p=0. 5, that means half of the weights will zeroed down, and rest will be scaled by a factor of 2.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What is the advantage of deep learning over traditional machine learning?",
+    "ideal_answer": "Deep learning offers several advantages over traditional machine learning approaches, including:\n\n1. Ability to process large amounts of data: Deep learning models can analyze and process massive amounts of data quickly and accurately, making it ideal for tasks such as image recognition or natural language processing. 2.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "What is a depthwise Separable layer and what are its advantages?",
+    "ideal_answer": "Standard neural network Convolution layers involve a lot of multiplications that make them unsuitable for deployment. In this above scenario, we have an input image of 12x12x3 pixels and we apply a 5x5 convolution(no padding, stride = 1). We stack 256 such kernels\nso that we get an output of dimensions 8x8x256.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "deep learning"
+  },
+  {
+    "question": "Mention three ways to make your model robust to outliers. ###\n\nInvestigating the outliers is always the first step in understanding how to treat them. After you understand the nature of why the outliers occurred you can apply one of the several methods mentioned [here](\n\n### Q2: Describe the motivation behind random forests and mention two reasons why they are better than individual decision trees. ###\n\nThe motivation behind random forest or ensemble models in general in layman's terms, Let's say we have a question/problem to solve we bring 100 people and ask each of them the question/problem and record their solution. The rest of the answer is [here](\n\n### Q3: What are the differences and similarities between gradient boosting and random forest? and what are the advantages and disadvantages of each when compared to each other? ###\n\nSimilarities:\n1. Both these algorithms are decision-tree-based algorithms\n2. Both these algorithms are ensemble algorithms\n3. Both are flexible models and do not need much data preprocessing.\n\nThe rest of the answer is [here](\n\n### Q4: What are L1 and L2 regularization? What are the differences between the two?",
+    "ideal_answer": "Regularization is a technique used to avoid overfitting by trying to make the model more simple. The rest of the answer is [here](.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What are the Bias and Variance in a Machine Learning Model and explain the bias-variance trade-off?",
+    "ideal_answer": "The goal of any supervised machine learning model is to estimate the mapping function (f) that predicts the target variable (y) given input (x). The prediction error can be broken down into three parts:\nThe rest of the answer is [here](.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Mention three ways to handle missing or corrupted data in a dataset.",
+    "ideal_answer": "In general, real-world data often has a lot of missing values. The cause of missing values can be data corruption or failure to record data. The rest of the answer is [here](.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Explain briefly the logistic regression model and state an example of when you have used it recently.",
+    "ideal_answer": "Logistic regression is used to calculate the probability of occurrence of an event in the form of a dependent output variable based on independent input variables. Logistic regression is commonly used to estimate the probability that an instance belongs to a particular class. If the probability is bigger than 0.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Explain briefly batch gradient descent, stochastic gradient descent, and mini-batch gradient descent. and what are the pros and cons for each of them? ###\n\nGradient descent is a generic optimization algorithm cable for finding optimal solutions to a wide range of problems. The general idea of gradient descent is to tweak parameters iteratively in order to minimize a cost function.\n\nBatch Gradient Descent:\nIn Batch Gradient descent the whole training data is used to minimize the loss function by taking a step toward the nearest minimum by calculating the gradient (the direction of descent)\n\nPros:\nSince the whole data set is used to calculate the gradient it will be stable and reach the minimum of the cost function without bouncing (if the learning rate is chosen cooreclty)\n\nCons:\n\nSince batch gradient descent uses all the training set to compute the gradient at every step, it will be very slow especially if the size of the training data is large.\n\n\nStochastic Gradient Descent:\n\nStochastic Gradient Descent picks up a random instance in the training data set at every step and computes the gradient based only on that single instance.\n\nPros:\n1. It makes the training much faster as it only works on one instance at a time.\n2. It become easier to train large datasets\n\nCons:\n\nDue to the stochastic (random) nature of this algorithm, this algorithm is much less regular than the batch gradient descent. Instead of gently decreasing until it reaches the minimum, the cost function will bounce up and down, decreasing only on average. Over time it will end up very close to the minimum, but once it gets there it will continue to bounce around, not settling down there. So once the algorithm stops the final parameters are good but not optimal. For this reason, it is important to use a training schedule to overcome this randomness.\n\nMini-batch Gradient:\n\nAt each step instead of computing the gradients on the whole data set as in the Batch Gradient Descent or using one random instance as in the Stochastic Gradient Descent, this algorithm computes the gradients on small random sets of instances called mini-batches.\n\nPros: \n1. The algorithm's progress space is less erratic than with Stochastic Gradient Descent, especially with large mini-batches.\n2. You can get a performance boost from hardware optimization of matrix operations, especially when using GPUs.\n\nCons: \n1. It might be difficult to escape from local minima.\n\n\n\n### Q9: Explain what is information gain and entropy in the context of decision trees. ###\nEntropy and Information Gain are two key metrics used in determining the relevance of decision-making when constructing a decision tree model and determining the nodes and the best way to split.\n\nThe idea of a decision tree is to divide the data set into smaller data sets based on the descriptive features until we reach a small enough set that contains data points that fall under one label.\n\nEntropy is the measure of impurity, disorder, or uncertainty in a bunch of examples. Entropy controls how a Decision Tree decides to split the data.\nInformation gain calculates the reduction in entropy or surprise from transforming a dataset in some way. It is commonly used in the construction of decision trees from a training dataset, by evaluating the information gain for each variable and selecting the variable that maximizes the information gain, which in turn minimizes the entropy and best splits the dataset into groups for effective classification.\n\n### Q10: Explain the linear regression model and discuss its assumption. ###\nLinear regression is a supervised statistical model to predict dependent variable quantity based on independent variables.\nLinear regression is a parametric model and the objective of linear regression is that it has to learn coefficients using the training data and predict the target value given only independent values.\n\nSome of the linear regression assumptions and how to validate them:\n\n1. Linear relationship between independent and dependent variables\n2. Independent residuals and the constant residuals at every x\nWe can check for 1 and 2 by plotting the residuals(error terms) against the fitted values (upper left graph). Generally, we should look for a lack of patterns and a consistent variance across the horizontal line.\n3. Normally distributed residuals\nWe can check for this using a couple of methods:\n Q-Q-plot(upper right graph): If data is normally distributed, points should roughly align with the 45-degree line.\n Boxplot: it also helps visualize outliers\n Shapiro\u2013Wilk test: If the p-value is lower than the chosen threshold, then the null hypothesis (Data is normally distributed) is rejected.\n4. Low multicollinearity\n you can calculate the VIF (Variable Inflation Factors) using your favorite statistical tool. If the value for each covariate is lower than 10 (some say 5), you're good to go.\n\nThe figure below summarizes these assumptions.\n\n\n### Q11: Explain briefly the K-Means clustering and how can we find the best value of K? ###\nK-Means is a well-known clustering algorithm. K-means clustering is often used because it is easy to interpret and implement. The rest of the answer is [here](\n\n### Q12: Define Precision, recall, and F1 and discuss the trade-off between them? ###\n\nPrecision and recall are two classification evaluation metrics that are used beyond accuracy. The rest of the answer is [here](\n\n### Q13: What are the differences between a model that minimizes squared error and the one that minimizes the absolute error? and in which cases each error metric would be more appropriate? ###\n\nBoth mean square error (MSE) and mean absolute error (MAE) measures the distances between vectors and express average model prediction in units of the target variable. Both can range from 0 to infinity, the lower they are the better the model.\n\nThe main difference between them is that in MSE the errors are squared before being averaged while in MAE they are not. This means that a large weight will be given to large errors. MSE is useful when large errors in the model are trying to be avoided. This means that outliers affect MSE more than MAE, that is why MAE is more robust to outliers. \nComputation-wise MSE is easier to use as the gradient calculation will be more straightforward than MAE, which requires linear programming to calculate it.\n\n### Q14: Define and compare parametric and non-parametric models and give two examples for each of them?",
+    "ideal_answer": "Parametric models assume that the dataset comes from a certain function with some set of parameters that should be tuned to reach the optimal performance. For such models, the number of parameters is determined prior to training, thus the degree of freedom is limited and reduces the chances of overfitting. Ex.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Explain the kernel trick in SVM. Why do we use it and how to choose what kernel to use?",
+    "ideal_answer": "Kernels are used in SVM to map the original input data into a particular higher dimensional space where it will be easier to find patterns in the data and train the model with better performance. For eg. : If we have binary class data which form a ring-like pattern (inner and outer rings representing two different class instances) when plotted in 2D space, a linear SVM kernel will not be able to differentiate the two classes well when compared to an RBF (radial basis function) kernel, mapping the data into a particular higher dimensional space where the two classes are clearly separable.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Define the cross-validation process and the motivation behind using it. ###\nCross-validation is a technique used to assess the performance of a learning model in several subsamples of training data. In general, we split the data into train and test sets where we use the training data to train our model and the test data to evaluate the performance of the model on unseen data and validation set for choosing the best hyperparameters. Now, a random split in most cases(for large datasets) is fine. However, for smaller datasets, it is susceptible to loss of important information present in the data in which it was not trained. Hence, cross-validation though computationally expensive combats this issue.\n\nThe process of cross-validation is as follows:\n\n1. Define k or the number of folds\n2. Randomly shuffle the data into K equally-sized blocks (folds)\n3. For each i in fold 1 to k train the data using all the folds except for fold i and test on the fold i.\n3. Average the K validation/test error from the previous step to get an estimate of the error.\n\nThis process aims to accomplish the following:\n1- Prevent overfitting during training by avoiding training and testing on the same subset of the data points\n\n2- Avoid information loss by using a certain subset of the data for validation only. This is important for small datasets.\n\nCross-validation is always good to be used for small datasets, and if used for large datasets the computational complexity will increase depending on the number of folds.\n\n\n\n### Q17: You are building a binary classifier and you found that the data is imbalanced, what should you do to handle this situation?",
+    "ideal_answer": "If there is a data imbalance there are several measures we can take to train a fairer binary classifier:\n\n1. Pre-Processing:\n\n Check whether you can get more data or not. Use sampling techniques (Sample minority class, Downsample majority class, can take the hybrid approach as well).",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "You are working on a clustering problem, what are different evaluation metrics that can be used, and how to choose between them?",
+    "ideal_answer": "Clusters are evaluated based on some similarity or dissimilarity measure such as the distance between cluster points. If the clustering algorithm separates dissimilar observations and similar observations together, then it has performed well. The two most popular metrics evaluation metrics for clustering algorithms are the \ud835\udc12\ud835\udc22\ud835\udc25\ud835\udc21\ud835\udc28\ud835\udc2e\ud835\udc1e\ud835\udc2d\ud835\udc2d\ud835\udc1e \ud835\udc1c\ud835\udc28\ud835\udc1e\ud835\udc1f\ud835\udc1f\ud835\udc22\ud835\udc1c\ud835\udc22\ud835\udc1e\ud835\udc27\ud835\udc2d and \ud835\udc03\ud835\udc2e\ud835\udc27\ud835\udc27\u2019\ud835\udc2c \ud835\udc08\ud835\udc27\ud835\udc1d\ud835\udc1e\ud835\udc31.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What is the ROC curve and when should you use it?",
+    "ideal_answer": "ROC curve, Receiver Operating Characteristic curve, is a graphical representation of the model's performance where we plot the True Positive Rate (TPR) against the False Positive Rate (FPR) for different threshold values, for hard classification, between 0 to 1 based on model output. This ROC curve is mainly used to compare two or more models as shown in the figure below. Now, it is easy to see that a reasonable model will always give FPR less (since it's an error) than TPR so, the curve hugs the upper left corner of the square box 0 to 1 on the TPR axis and 0 to 1 on the FPR axis.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What is the difference between hard and soft voting classifiers in the context of ensemble learners?",
+    "ideal_answer": "Hard Voting: We take into account the class predictions for each classifier and then classify an input based on the maximum votes to a particular class. Soft Voting: We take into account the probability predictions for each class by each classifier and then classify an input to the class with maximum probability based on the average probability (averaged over the classifier's probabilities) for that class.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What is boosting in the context of ensemble learners discuss two famous boosting methods",
+    "ideal_answer": "Boosting refers to any Ensemble method that can combine several weak learners into a strong learner. The general idea of most boosting methods is to train predictors sequentially, each trying to correct its predecessor. There are many boosting methods available, but by far the most popular are: \n\n Adaptive Boosting: One way for a new predictor to correct its predecessor is to pay a bit more attention to the training instances that the predecessor under-fitted.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "How can you evaluate the performance of a dimensionality reduction algorithm on your dataset?",
+    "ideal_answer": "Intuitively, a dimensionality reduction algorithm performs well if it eliminates a lot of dimensions from the dataset without losing too much information. One way to measure this is to apply the reverse transformation and measure the reconstruction error. However, not all dimensionality reduction algorithms provide a reverse transformation.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Define the curse of dimensionality and how to solve it.",
+    "ideal_answer": "Curse of dimensionality represents the situation when the amount of data is too few to be represented in a high-dimensional space, as it will be highly scattered in that high-dimensional space and it becomes more probable that we overfit this data. If we increase the number of features, we are implicitly increasing model complexity and if we increase model complexity we need more data. Possible solutions are:\nRemove irrelevant features not discriminating classes correlated or features not resulting in much improvement, we can use:\n\n Feature selection(select the most important ones).",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "In what cases would you use vanilla PCA, Incremental PCA, Randomized PCA, or Kernel PCA?",
+    "ideal_answer": "Regular PCA is the default, but it works only if the dataset fits in memory. Incremental PCA is useful for large datasets that don't fit in memory, but it is slower than regular PCA, so if the dataset fits in memory you should prefer regular PCA. Incremental PCA is also useful for online tasks when you need to apply PCA on the fly, every time a new instance arrives.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Discuss two clustering algorithms that can scale to large datasets",
+    "ideal_answer": "Minibatch Kmeans:  Instead of using the full dataset at each iteration, the algorithm\nis capable of using mini-batches, moving the centroids just slightly at each iteration. This speeds up the algorithm typically by a factor of 3 or 4 and makes it\npossible to cluster huge datasets that do not fit in memory. Scikit-Learn implements\nthis algorithm in the MiniBatchKMeans class.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Do you need to scale your data if you will be using the SVM classifier and discus your answer",
+    "ideal_answer": "Yes, feature scaling is required for SVM and all margin-based classifiers since the optimal hyperplane (the decision boundary) is dependent on the scale of the input features. In other words, the distance between two observations will differ for scaled and non-scaled cases, leading to different models being generated. This can be seen in the figure below, when the features have different scales, we can see that the decision boundary and the support vectors are only classifying the X1 features without taking into consideration the X0 feature, however after scaling the data to the same scale the decision boundaries and support vectors are looking much better and the model is taking into account both features.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What are Loss Functions and Cost Functions? Explain the key Difference Between them.",
+    "ideal_answer": "The loss function is the measure of the performance of the model on a single training example, whereas the cost function is the average loss function over all training examples or across the batch in the case of mini-batch gradient descent. Some examples of loss functions are Mean Squared Error, Binary Cross Entropy, etc. Whereas, the cost function is the average of the above loss functions over training examples.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What is the importance of batch in machine learning and explain some batch-dependent gradient descent algorithms?",
+    "ideal_answer": "In the memory, the dataset can load either completely at once or in the form of a set. If we have a huge size of the dataset, then loading the whole data into memory will reduce the training speed, hence batch term is introduced. Example: image data contains 1,00,000 images, we can load this into 3125 batches where 1 batch = 32 images.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What are the different methods to split a tree in a decision tree algorithm?",
+    "ideal_answer": "Decision trees can be of two types regression and classification. For classification, classification accuracy created a lot of instability. So the following loss functions are used:\n- Gini's Index\nGini impurity is used to predict the likelihood of a randomly chosen example being incorrectly classified by a particular node.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Why boosting is a more stable algorithm as compared to other ensemble algorithms?",
+    "ideal_answer": "Boosting algorithms focus on errors found in previous iterations until they become obsolete. Whereas in bagging there is no corrective loop. That\u2019s why boosting is a more stable algorithm compared to other ensemble algorithms.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What is active learning and discuss one strategy of it?",
+    "ideal_answer": "Active learning is a special case of machine learning in which a learning algorithm can interactively query a user (or some other information source) to label new data points with the desired outputs. In statistics literature, it is sometimes referred to as optimal experimental design. 1.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What are the evaluation metrics that can be used for multi-label classification?",
+    "ideal_answer": "Multi-label classification is a type of classification problem where each instance can be assigned to multiple classes or labels simultaneously. The evaluation metrics for multi-label classification are designed to measure the performance of a multi-label classifier in predicting the correct set of labels for each instance. Some commonly used evaluation metrics for multi-label classification are:\n\n1.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What is the difference between concept and data drift and how to overcome each of them?",
+    "ideal_answer": "Concept drift and data drift are two different types of problems that can occur in machine learning systems. Concept drift refers to changes in the underlying relationships between the input data and the target variable over time. This means that the distribution of the data that the model was trained on no longer matches the distribution of the data it is being tested on.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "Can you explain the ARIMA model and its components?",
+    "ideal_answer": "The ARIMA model, which stands for Autoregressive Integrated Moving Average, is a widely used time series forecasting model. It combines three key components: Autoregression (AR), Differencing (I), and Moving Average (MA). Autoregression (AR):\nThe autoregressive component captures the relationship between an observation in a time series and a certain number of lagged observations.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  },
+  {
+    "question": "What are the assumptions made by the ARIMA model?",
+    "ideal_answer": "The ARIMA model makes several assumptions about the underlying time series data. These assumptions are important to ensure the validity and accuracy of the model's results. Here are the key assumptions:\n\nStationarity: The ARIMA model assumes that the time series is stationary.",
+    "rubric": [
+      "concept clarity",
+      "key points covered",
+      "example or explanation"
+    ],
+    "topic": "machine learning"
+  }
+]
