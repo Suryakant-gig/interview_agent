@@ -1,22 +1,110 @@
-def infer_filters(query: str):
-    q = query.lower()
-    flt = {}
+from sklearn.metrics.pairwise import (
+    cosine_similarity
+)
 
-    if "deep learning" in q or "cnn" in q or "rnn" in q:
-        flt["topic"] = "DL"
-    elif "machine learning" in q or "regression" in q or "svm" in q:
-        flt["topic"] = "ML"
 
-    return flt or None
+# ---------------------------------
+# Topic prototypes
+# ---------------------------------
+TOPIC_PROTOTYPES = {
 
-def get_retriever(vectorstore, query: str, k: int = 20):
-    flt = infer_filters(query)
+    "DL":
+        "deep learning neural networks CNN RNN transformers attention",
 
-    if flt:
-        return vectorstore.as_retriever(
-            search_kwargs={"k": k, "filter": flt}
+    "ML":
+        "machine learning regression svm clustering decision trees random forest"
+}
+
+
+# ---------------------------------
+# Semantic topic routing
+# ---------------------------------
+def infer_topic(
+    query,
+    embedding_model
+):
+
+    # ---------------------------------
+    # Embed query
+    # ---------------------------------
+    query_embedding = (
+        embedding_model.embed_query(query)
+    )
+
+    best_topic = None
+
+    best_score = -1
+
+    # ---------------------------------
+    # Compare against prototypes
+    # ---------------------------------
+    for topic, prototype_text in (
+        TOPIC_PROTOTYPES.items()
+    ):
+
+        prototype_embedding = (
+            embedding_model.embed_query(
+                prototype_text
+            )
         )
-    else:
-        return vectorstore.as_retriever(
-            search_kwargs={"k": k}
-        )
+
+        score = cosine_similarity(
+
+            [query_embedding],
+            [prototype_embedding]
+
+        )[0][0]
+
+        if score > best_score:
+
+            best_score = score
+
+            best_topic = topic
+
+    print(
+        f"Predicted Topic: {best_topic}"
+    )
+
+    print(
+        f"Similarity Score: {best_score}"
+    )
+
+    return best_topic
+
+
+# ---------------------------------
+# Retriever builder
+# ---------------------------------
+def get_retriever(
+    vectorstore,
+    query,
+    embedding_model,
+    k: int = 20
+):
+
+    # ---------------------------------
+    # Infer topic
+    # ---------------------------------
+    topic = infer_topic(
+        query,
+        embedding_model
+    )
+
+    # ---------------------------------
+    # Build retriever
+    # ---------------------------------
+    retriever = vectorstore.as_retriever(
+
+        search_type="mmr",
+
+        search_kwargs={
+
+            "k": k,
+
+            "filter": {
+                "topic": topic
+            }
+        }
+    )
+
+    return retriever

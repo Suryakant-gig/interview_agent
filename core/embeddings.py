@@ -1,31 +1,78 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+import os
 
-from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
+import torch
 
-loader = DirectoryLoader(
-    path="knowledge_pdfs/",
-    glob="**/*.pdf",
-    loader_cls=PyPDFLoader
+from dotenv import load_dotenv
+
+from langchain_huggingface import (
+    HuggingFaceEmbeddings
 )
 
-documents = loader.load()
+# ---------------------------------
+# Load environment variables
+# ---------------------------------
+load_dotenv()
 
-for doc in documents:
-    if "Deep Learning" in doc.metadata["source"]:
-        doc.metadata["topic"] = "DL"
-    else:
-        doc.metadata["topic"] = "ML"
 
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=350,
-    chunk_overlap=70,
-    separators=["\n\n", "\n", ".", " ", ""]
-)
+# ---------------------------------
+# Check CUDA
+# ---------------------------------
+print("CUDA Available:",
+      torch.cuda.is_available())
 
-chunks = splitter.split_text(documents)
-embedding_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
+if torch.cuda.is_available():
 
-embeddings = embedding_model.embed_documents(chunks)
+    print(
+        "GPU:",
+        torch.cuda.get_device_name(0)
+    )
+
+    DEVICE = "cuda"
+
+else:
+
+    print("Using CPU")
+
+    DEVICE = "cpu"
+
+
+# ---------------------------------
+# Hugging Face Token
+# ---------------------------------
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+
+# ---------------------------------
+# Embedding Model Loader
+# ---------------------------------
+def get_embedding_model():
+    """
+    Load embedding model
+    with CUDA support.
+    """
+
+    embedding_model = HuggingFaceEmbeddings(
+
+        model_name=
+        "sentence-transformers/all-MiniLM-L6-v2",
+
+        model_kwargs={
+
+            # GPU usage
+            "device": DEVICE,
+
+            # HuggingFace auth
+            "token": HF_TOKEN
+        },
+
+        encode_kwargs={
+
+            # Better batching
+            "batch_size": 32,
+
+            # Normalize embeddings
+            "normalize_embeddings": True
+        }
+    )
+
+    return embedding_model

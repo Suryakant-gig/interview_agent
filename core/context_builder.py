@@ -45,6 +45,17 @@ def build_context(
             seen.add(key)
             unique_docs.append(d)
 
+
+    docs = sorted(
+        docs,
+        key=lambda d:
+        d.metadata.get(
+            "rerank_score",
+            0
+        ),
+        reverse=True
+    )
+
     # -----------------------------
     # 2. Filter weak chunks
     # -----------------------------
