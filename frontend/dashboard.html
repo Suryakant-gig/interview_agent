@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self Correcting RAG Workflow</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+            background:#0f172a;
+            color:white;
+            padding:40px;
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:40px;
+            color:#38bdf8;
+        }
+
+        .container{
+            max-width:1200px;
+            margin:auto;
+        }
+
+        .flow{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:25px;
+        }
+
+        .node{
+            background:#1e293b;
+            border:2px solid #38bdf8;
+            border-radius:12px;
+            padding:20px 30px;
+            min-width:280px;
+            text-align:center;
+            box-shadow:0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .node h2{
+            font-size:22px;
+            margin-bottom:10px;
+            color:#38bdf8;
+        }
+
+        .node p{
+            color:#cbd5e1;
+            line-height:1.6;
+        }
+
+        .arrow{
+            font-size:32px;
+            color:#38bdf8;
+        }
+
+        .decision{
+            border-color:#f59e0b;
+        }
+
+        .success{
+            border-color:#10b981;
+        }
+
+        .danger{
+            border-color:#ef4444;
+        }
+
+        .rewrite{
+            border-color:#a855f7;
+        }
+
+        .code-box{
+            background:#020617;
+            border-radius:10px;
+            padding:20px;
+            margin-top:15px;
+            text-align:left;
+            overflow-x:auto;
+            color:#38bdf8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Self Correcting RAG Workflow</h1>
+
+        <div class="flow">
+
+            <div class="node">
+                <h2>START</h2>
+                <p>User asks a question.</p>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node decision">
+                <h2>decide_retrieval</h2>
+                <p>
+                    Decide whether retrieval is needed
+                    or direct generation is enough.
+                </p>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node">
+                <h2>retrieve()</h2>
+
+                <p>
+                    Retrieve relevant documents from vector database.
+                </p>
+
+                <div class="code-box">
+docs = retriever.invoke(question)
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node decision">
+                <h2>grade_documents()</h2>
+
+                <p>
+                    Check whether retrieved documents
+                    are relevant to the question.
+                </p>
+
+                <div class="code-box">
+score = doc_grader.invoke({
+    "question": question,
+    "documents": docs_text
+})
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node success">
+                <h2>generate()</h2>
+
+                <p>
+                    Generate grounded answer using retrieved context.
+                </p>
+
+                <div class="code-box">
+generation = generate_chain.invoke({
+    "question": question,
+    "context": context
+})
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node decision">
+                <h2>Hallucination Check</h2>
+
+                <p>
+                    Validate whether answer is supported
+                    by retrieved documents.
+                </p>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node rewrite">
+                <h2>rewrite_query()</h2>
+
+                <p>
+                    Rewrite query if retrieval quality is poor.
+                </p>
+
+                <div class="code-box">
+better_question = rewrite_chain.invoke({
+    "question": question
+})
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node success">
+                <h2>FINAL ANSWER</h2>
+
+                <p>
+                    Return grounded and validated response.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

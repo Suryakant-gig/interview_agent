@@ -3,13 +3,10 @@ from sklearn.metrics.pairwise import (
 )
 
 
-# ---------------------------------
-# Topic prototypes
-# ---------------------------------
 TOPIC_PROTOTYPES = {
 
     "DL":
-        "deep learning neural networks CNN RNN transformers attention",
+        "deep learning neural networks CNN RNN transformers attention backpropagation",
 
     "ML":
         "machine learning regression svm clustering decision trees random forest"
@@ -17,16 +14,13 @@ TOPIC_PROTOTYPES = {
 
 
 # ---------------------------------
-# Semantic topic routing
+# Infer Topic
 # ---------------------------------
 def infer_topic(
     query,
     embedding_model
 ):
 
-    # ---------------------------------
-    # Embed query
-    # ---------------------------------
     query_embedding = (
         embedding_model.embed_query(query)
     )
@@ -35,9 +29,6 @@ def infer_topic(
 
     best_score = -1
 
-    # ---------------------------------
-    # Compare against prototypes
-    # ---------------------------------
     for topic, prototype_text in (
         TOPIC_PROTOTYPES.items()
     ):
@@ -61,26 +52,23 @@ def infer_topic(
 
             best_topic = topic
 
-    print(
-        f"Predicted Topic: {best_topic}"
-    )
-
-    print(
-        f"Similarity Score: {best_score}"
-    )
+    print(f"Predicted Topic: {best_topic}")
+    print(f"Similarity Score: {best_score}")
 
     return best_topic
 
 
 # ---------------------------------
-# Retriever builder
+# Hybrid Retriever
 # ---------------------------------
 def get_retriever(
-    vectorstore,
-    query,
-    embedding_model,
-    k: int = 20
-):
+
+            vectorstore,
+            query,
+            embedding_model,
+            file_name,
+            k: int = 20
+    ):
 
     # ---------------------------------
     # Infer topic
@@ -90,18 +78,23 @@ def get_retriever(
         embedding_model
     )
 
+    print(f"Using Topic: {topic}")
+
     # ---------------------------------
-    # Build retriever
+    # Retrieve only from uploaded file
     # ---------------------------------
     retriever = vectorstore.as_retriever(
 
-        search_type="mmr",
+        search_type="similarity",
 
         search_kwargs={
 
             "k": k,
 
             "filter": {
+
+                "file": file_name,
+
                 "topic": topic
             }
         }

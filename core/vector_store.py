@@ -93,15 +93,14 @@ def add_documents(
 
     for chunk in chunks:
 
-        chunk_id = chunk.metadata.get(
-            "chunk_id"
+        doc_id = chunk.metadata.get(
+            "doc_id"
         )
 
-        if chunk_id:
-
+        if doc_id:
             new_chunks.append(chunk)
 
-            ids.append(chunk_id)
+            ids.append(doc_id)
 
     # ---------------------------------
     # Upload to Pinecone

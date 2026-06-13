@@ -1,14 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from core.embeddings import (
-    get_embedding_model
-)
-
-from core.vector_store import (
-    get_vector_store
-)
-
 from core.retriever import (
     get_retriever
 )
@@ -31,18 +23,10 @@ from core.question_generator import (
 # ---------------------------------
 router = APIRouter()
 
-
-# ---------------------------------
-# Load models once
-# ---------------------------------
-embedding_model = (
-    get_embedding_model()
+from core.model_manager import (
+    embedding_model,
+    vectorstore
 )
-
-vectorstore = get_vector_store(
-    embedding_model
-)
-
 
 # ---------------------------------
 # Request schema
@@ -50,6 +34,8 @@ vectorstore = get_vector_store(
 class InterviewRequest(BaseModel):
 
     topic_query: str
+
+    file_name: str
 
     difficulty: str = "medium"
 
@@ -71,7 +57,9 @@ def generate_interview_question(
 
         request.topic_query,
 
-        embedding_model
+        embedding_model,
+
+        request.file_name
     )
 
     # ---------------------------------
@@ -80,6 +68,10 @@ def generate_interview_question(
     retrieved_docs = retriever.invoke(
         request.topic_query
     )
+    for doc in retrieved_docs[:3]:
+        print("\n====================")
+        print(doc.metadata)
+        print(doc.page_content[:300])
 
     # ---------------------------------
     # Safety check

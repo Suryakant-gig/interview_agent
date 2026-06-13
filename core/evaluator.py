@@ -7,7 +7,7 @@ from langchain_ollama import ChatOllama
 # Load local LLM
 # -----------------------------
 llm = ChatOllama(
-    model="llama3",
+    model="llama2",
     temperature=0
 )
 
@@ -18,7 +18,7 @@ llm = ChatOllama(
 def build_evaluation_prompt(
     question,
     candidate_answer,
-    ideal_answer,
+
     rubric,
     context
 ):
@@ -48,12 +48,6 @@ QUESTION
 CANDIDATE ANSWER
 -----------------------------------
 {candidate_answer}
-
------------------------------------
-IDEAL ANSWER
------------------------------------
-{ideal_answer}
-
 -----------------------------------
 RUBRIC
 -----------------------------------
@@ -103,14 +97,12 @@ Return ONLY valid JSON.
 
     return prompt
 
-
 # -----------------------------
 # Main Evaluator
 # -----------------------------
 def evaluate_answer(
     question,
     candidate_answer,
-    ideal_answer,
     rubric,
     context
 ):
@@ -124,7 +116,6 @@ def evaluate_answer(
     prompt = build_evaluation_prompt(
         question,
         candidate_answer,
-        ideal_answer,
         rubric,
         context
     )
@@ -134,24 +125,50 @@ def evaluate_answer(
     # -----------------------------
     response = llm.invoke(prompt)
 
+    raw_output = response.content
+
+    print("\nRAW MODEL OUTPUT:\n")
+    print(raw_output)
+
+    # -----------------------------
+    # Clean markdown formatting
+    # -----------------------------
+    cleaned = raw_output.replace(
+        "```json",
+        ""
+    ).replace(
+        "```",
+        ""
+    ).strip()
+
     # -----------------------------
     # Parse JSON safely
     # -----------------------------
     try:
 
-        result = json.loads(
-            response.content
-        )
+        result = json.loads(cleaned)
 
-    except Exception:
+    except Exception as e:
+
+        print(f"JSON Parse Error: {e}")
 
         result = {
+
             "overall_score": 0,
+
             "rubric_scores": {},
+
             "strengths": [],
+
             "weaknesses": [],
+
             "missing_concepts": [],
-            "improvement": "Failed to parse model output"
+
+            "improvement": (
+                "Failed to parse model output"
+            ),
+
+            "raw_output": raw_output
         }
 
     return result

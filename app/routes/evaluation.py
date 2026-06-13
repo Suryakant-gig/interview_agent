@@ -1,14 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from core.embeddings import (
-    get_embedding_model
-)
-
-from core.vector_store import (
-    get_vector_store
-)
-
 from core.retriever import (
     get_retriever
 )
@@ -41,26 +33,17 @@ class EvaluationRequest(BaseModel):
 
     candidate_answer: str
 
-    ideal_answer: str
+    file_name: str
 
-    rubric: list[str]
-
-
-# ---------------------------------
-# Load embedding model once
-# ---------------------------------
-embedding_model = (
-    get_embedding_model()
+rubric = [
+    "technical accuracy",
+    "clarity",
+    "depth of explanation"
+]
+from core.model_manager import (
+    embedding_model,
+    vectorstore
 )
-
-
-# ---------------------------------
-# Connect vector DB once
-# ---------------------------------
-vectorstore = get_vector_store(
-    embedding_model
-)
-
 
 # ---------------------------------
 # Evaluation Route
@@ -79,9 +62,10 @@ def evaluate_candidate_answer(
 
         request.question,
 
-        embedding_model
-    )
+        embedding_model,
 
+        request.file_name
+    )
     # ---------------------------------
     # 2. Retrieve documents
     # ---------------------------------
@@ -114,15 +98,10 @@ def evaluate_candidate_answer(
             request.candidate_answer
         ),
 
-        ideal_answer=(
-            request.ideal_answer
-        ),
-
-        rubric=request.rubric,
+        rubric=rubric,
 
         context=context
     )
-
     # ---------------------------------
     # 6. Return response
     # ---------------------------------

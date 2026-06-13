@@ -1,5 +1,4 @@
 import os
-
 import torch
 
 from dotenv import load_dotenv
@@ -9,16 +8,22 @@ from langchain_huggingface import (
 )
 
 # ---------------------------------
-# Load environment variables
+# Load env
 # ---------------------------------
 load_dotenv()
 
+# ---------------------------------
+# FORCE OFFLINE MODE
+# ---------------------------------
+os.environ["HF_HUB_OFFLINE"] = "1"
 
 # ---------------------------------
 # Check CUDA
 # ---------------------------------
-print("CUDA Available:",
-      torch.cuda.is_available())
+print(
+    "CUDA Available:",
+    torch.cuda.is_available()
+)
 
 if torch.cuda.is_available():
 
@@ -35,21 +40,15 @@ else:
 
     DEVICE = "cpu"
 
-
 # ---------------------------------
-# Hugging Face Token
+# HF Token
 # ---------------------------------
 HF_TOKEN = os.getenv("HF_TOKEN")
-
 
 # ---------------------------------
 # Embedding Model Loader
 # ---------------------------------
 def get_embedding_model():
-    """
-    Load embedding model
-    with CUDA support.
-    """
 
     embedding_model = HuggingFaceEmbeddings(
 
@@ -58,19 +57,15 @@ def get_embedding_model():
 
         model_kwargs={
 
-            # GPU usage
             "device": DEVICE,
 
-            # HuggingFace auth
             "token": HF_TOKEN
         },
 
         encode_kwargs={
 
-            # Better batching
             "batch_size": 32,
 
-            # Normalize embeddings
             "normalize_embeddings": True
         }
     )

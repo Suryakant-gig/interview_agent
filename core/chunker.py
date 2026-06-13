@@ -1,7 +1,6 @@
 from langchain_text_splitters import TokenTextSplitter
 
 
-
 def split_documents(
     documents,
     chunk_size: int = 200,
@@ -17,12 +16,5 @@ def split_documents(
     )
 
     chunks = splitter.split_documents(documents)
-
-    # Add chunk IDs
-    for i, chunk in enumerate(chunks):
-
-        chunk.metadata["chunk_id"] = (
-            f"{chunk.metadata['doc_id']}_chunk_{i}"
-        )
 
     return chunks

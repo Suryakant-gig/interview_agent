@@ -15,13 +15,17 @@ from core.chunker import (
     split_documents
 )
 
-from core.embeddings import (
-    get_embedding_model
+from core.vector_store import (
+    add_documents
 )
 
-from core.vector_store import (
-    get_vector_store,
-    add_documents
+from core.retriever import (
+    infer_topic
+)
+
+from core.model_manager import (
+    embedding_model,
+    vectorstore
 )
 
 
@@ -43,91 +47,125 @@ UPLOAD_DIR.mkdir(
 
 
 # ---------------------------------
-# Load embedding model once
+# Upload PDF Route
 # ---------------------------------
-embedding_model = (
-    get_embedding_model()
-)
-
-
-# ---------------------------------
-# Connect vector store once
-# ---------------------------------
-vectorstore = get_vector_store(
-    embedding_model
-)
-
 @router.post("/upload-pdf")
 def upload_pdf(
     file: UploadFile = File(...)
 ):
 
-    save_path = (
-        UPLOAD_DIR / file.filename
-    )
+    try:
 
-    with open(save_path, "wb") as buffer:
-
-        shutil.copyfileobj(
-            file.file,
-            buffer
+        # ---------------------------------
+        # Save uploaded file
+        # ---------------------------------
+        save_path = (
+            UPLOAD_DIR / file.filename
         )
 
-    # ---------------------------------
-    # Load PDF
-    # ---------------------------------
-    loader = PyPDFLoader(
-        str(save_path)
-    )
+        with open(save_path, "wb") as buffer:
 
-    documents = loader.load()
-
-    # ---------------------------------
-    # Add metadata
-    # ---------------------------------
-    for i, doc in enumerate(documents):
-
-        doc.metadata.update({
-
-            "file": file.filename,
-
-            "page": doc.metadata.get(
-                "page",
-                -1
-            ),
-
-            "topic": "custom_upload",
-
-            "doc_id": (
-                f"{file.filename}_page_{i}"
+            shutil.copyfileobj(
+                file.file,
+                buffer
             )
-        })
 
-    # ---------------------------------
-    # Split documents
-    # ---------------------------------
-    chunks = split_documents(
-        documents
-    )
+        # ---------------------------------
+        # Load PDF
+        # ---------------------------------
+        loader = PyPDFLoader(
+            str(save_path)
+        )
 
-    # ---------------------------------
-    # Upload chunks to vector DB
-    # ---------------------------------
-    add_documents(
-        vectorstore,
-        chunks
-    )
+        documents = loader.load()
 
-    # ---------------------------------
-    # Return success response
-    # ---------------------------------
-    return {
+        # ---------------------------------
+        # Safety check
+        # ---------------------------------
+        if not documents:
 
-        "status": "success",
+            raise HTTPException(
 
-        "filename": file.filename,
+                status_code=400,
 
-        "pages_loaded": len(documents),
+                detail="No text could be extracted from PDF"
+            )
 
-        "chunks_created": len(chunks)
-    }
+        # ---------------------------------
+        # Split documents into chunks
+        # ---------------------------------
+        chunks = split_documents(
+            documents
+        )
+
+        # ---------------------------------
+        # Add semantic metadata
+        # ---------------------------------
+        for i, chunk in enumerate(chunks):
+
+            # ---------------------------------
+            # Infer semantic topic
+            # ---------------------------------
+            content = chunk.page_content.strip()
+
+            if not content:
+
+                topic = "UNKNOWN"
+
+            else:
+
+                topic = infer_topic(
+                    content,
+                    embedding_model
+                )
+            # ---------------------------------
+            # Update metadata
+            chunk.metadata.update({
+
+                "file": file.filename,
+
+                "page": chunk.metadata.get(
+                    "page",
+                    -1
+                ),
+
+                "topic": topic,
+
+                "doc_id": (
+                    f"{file.filename}_chunk_{i}"
+                )
+            })
+        # ---------------------------------
+        # Upload to Pinecone
+        # ---------------------------------
+        add_documents(
+
+            vectorstore,
+
+            chunks
+        )
+
+        # ---------------------------------
+        # Success response
+        # ---------------------------------
+        return {
+
+            "status": "success",
+
+            "filename": file.filename,
+
+            "pages_loaded": len(documents),
+
+            "chunks_created": len(chunks)
+        }
+
+    except Exception as e:
+
+        print(f"Upload Error: {e}")
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=str(e)
+        )
