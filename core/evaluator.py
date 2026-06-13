@@ -1,40 +1,13 @@
 import json
-
-from langchain_ollama import ChatOllama
-
-
-# -----------------------------
-# Load local LLM
-# -----------------------------
-llm = ChatOllama(
-    model="llama2",
-    temperature=0
-)
+import re
+from core.grok_client import grok_chat
 
 
-# -----------------------------
-# Prompt Builder
-# -----------------------------
-def build_evaluation_prompt(
-    question,
-    candidate_answer,
+def build_evaluation_prompt(question, candidate_answer, rubric, context):
+    rubric_text = "\n".join([f"- {r}" for r in rubric])
+    return f"""You are an expert AI technical interviewer.
 
-    rubric,
-    context
-):
-    """
-    Build structured evaluation prompt.
-    """
-
-    rubric_text = "\n".join(
-        [f"- {r}" for r in rubric]
-    )
-
-    prompt = f"""
-You are an expert AI technical interviewer.
-
-Your task is to evaluate a candidate answer
-using:
+Your task is to evaluate a candidate answer using:
 1. Ideal reference answer
 2. Evaluation rubric
 3. Retrieved technical context
@@ -92,95 +65,46 @@ Return ONLY valid JSON.
       "Difference between bagging and boosting"
   ],
   "improvement": "Add clearer explanation of iterative error correction."
-}}
-"""
+}}"""
 
-    return prompt
 
-# -----------------------------
-# Main Evaluator
-# -----------------------------
-def evaluate_answer(
-    question,
-    candidate_answer,
-    rubric,
-    context
-):
-    """
-    Main evaluation pipeline.
-    """
+def evaluate_answer(question, candidate_answer, rubric, context):
+    prompt = build_evaluation_prompt(question, candidate_answer, rubric, context)
+    messages = [{"role": "user", "content": prompt}]
 
-    # -----------------------------
-    # Build prompt
-    # -----------------------------
-    prompt = build_evaluation_prompt(
-        question,
-        candidate_answer,
-        rubric,
-        context
-    )
-
-    # -----------------------------
-    # Call LLM
-    # -----------------------------
-    response = llm.invoke(prompt)
-
-    raw_output = response.content
-
-    print("\nRAW MODEL OUTPUT:\n")
-    print(raw_output)
-
-    # -----------------------------
-    # Clean markdown formatting
-    # -----------------------------
-    cleaned = raw_output.replace(
-        "```json",
-        ""
-    ).replace(
-        "```",
-        ""
-    ).strip()
-
-    # -----------------------------
-    # Parse JSON safely
-    # -----------------------------
-    import re
     try:
-        result = json.loads(cleaned)
+        raw_output = grok_chat(messages, temperature=0.0)
+    except RuntimeError as e:
+        return {
+            "overall_score": 0,
+            "rubric_scores": {},
+            "strengths": [],
+            "weaknesses": [],
+            "missing_concepts": [],
+            "improvement": f"Grok API call failed: {e}",
+            "raw_output": ""
+        }
 
+    print("\nRAW MODEL OUTPUT:\n", raw_output)
+
+    cleaned = raw_output.replace("```json", "").replace("```", "").strip()
+
+    try:
+        return json.loads(cleaned)
     except Exception:
-
         try:
-            json_match = re.search(
-                r"\{.*\}",
-                cleaned,
-                re.DOTALL
-            )
-
+            json_match = re.search(r"\{.*\}", cleaned, re.DOTALL)
             if json_match:
-                result = json.loads(
-                    json_match.group()
-                )
-            else:
-                raise ValueError(
-                    "No JSON found"
-                )
-
+                return json.loads(json_match.group())
+            raise ValueError("No JSON found")
         except Exception as e:
-
-            print(
-                f"JSON Parse Error: {e}"
-            )
-
-            result = {
+            print(f"JSON Parse Error: {e}")
+            return {
                 "overall_score": 0,
                 "rubric_scores": {},
                 "strengths": [],
                 "weaknesses": [],
                 "missing_concepts": [],
-                "improvement":
-                    "Failed to parse model output",
+                "improvement": "Failed to parse model output",
                 "raw_output": raw_output
             }
-
-    return result

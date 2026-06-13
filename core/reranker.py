@@ -1,81 +1,30 @@
-from sentence_transformers import (
-    CrossEncoder
-)
+from rank_bm25 import BM25Okapi
 
 
-# ---------------------------------
-# Load reranker model
-# ---------------------------------
-reranker_model = CrossEncoder(
-    "cross-encoder/ms-marco-MiniLM-L-6-v2"
-)
-
-
-# ---------------------------------
-# Rerank documents
-# ---------------------------------
-def rerank_documents(
-    query,
-    docs,
-    top_k=5,
-    score_threshold=0.3
-):
-    """
-    Rerank retrieved documents
-    using CrossEncoder.
-    """
-
-    # ---------------------------------
-    # Empty guard
-    # ---------------------------------
+def rerank_documents(query, docs, top_k=5, score_threshold=0.0):
     if not docs:
         return []
 
-    # ---------------------------------
-    # Query-document pairs
-    # ---------------------------------
-    pairs = [
-
-        (query, d.page_content)
-
-        for d in docs
+    tokenized_corpus = [
+        doc.page_content.lower().split() for doc in docs
     ]
+    tokenized_query = query.lower().split()
 
-    # ---------------------------------
-    # Predict relevance scores
-    # ---------------------------------
-    scores = reranker_model.predict(
-        pairs
-    )
+    bm25 = BM25Okapi(tokenized_corpus)
+    scores = bm25.get_scores(tokenized_query)
 
-    # ---------------------------------
-    # Combine scores + docs
-    # ---------------------------------
     ranked = sorted(
-
         zip(scores, docs),
-
         key=lambda x: x[0],
-
         reverse=True
     )
 
     reranked_docs = []
-
-    # ---------------------------------
-    # Keep strong documents only
-    # ---------------------------------
     for score, doc in ranked:
-
         if score < score_threshold:
             continue
-
-        doc.metadata[
-            "rerank_score"
-        ] = float(score)
-
+        doc.metadata["rerank_score"] = float(score)
         reranked_docs.append(doc)
-
         if len(reranked_docs) >= top_k:
             break
 

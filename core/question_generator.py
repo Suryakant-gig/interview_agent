@@ -1,32 +1,10 @@
-from langchain_ollama import ChatOllama
+from core.grok_client import grok_chat
 
 
-# ---------------------------------
-# Load LLM
-# ---------------------------------
-llm = ChatOllama(
-    model="llama2",
-    temperature=0.7
-)
+def build_question_prompt(context, difficulty="medium"):
+    return f"""You are an expert AI technical interviewer.
 
-
-# ---------------------------------
-# Prompt Builder
-# ---------------------------------
-def build_question_prompt(
-    context,
-    difficulty="medium"
-):
-    """
-    Build interview question generation prompt.
-    """
-
-    prompt = f"""
-You are an expert AI technical interviewer.
-
-Your task is to generate ONE high-quality
-technical interview question from the
-provided reference context.
+Your task is to generate ONE high-quality technical interview question from the provided reference context.
 
 -----------------------------------
 REFERENCE CONTEXT
@@ -50,37 +28,11 @@ INSTRUCTIONS
 OUTPUT FORMAT
 -----------------------------------
 
-Return ONLY the interview question.
-"""
-
-    return prompt
+Return ONLY the interview question."""
 
 
-# ---------------------------------
-# Main Generator
-# ---------------------------------
-def generate_question(
-    context,
-    difficulty="medium"
-):
-    """
-    Generate interview question
-    from retrieved context.
-    """
-
-    # ---------------------------------
-    # Build prompt
-    # ---------------------------------
-    prompt = build_question_prompt(
-        context=context,
-        difficulty=difficulty
-    )
-
-    # ---------------------------------
-    # Call LLM
-    # ---------------------------------
-    response = llm.invoke(prompt)
-
-    question = response.content.strip()
-
+def generate_question(context, difficulty="medium"):
+    prompt = build_question_prompt(context=context, difficulty=difficulty)
+    messages = [{"role": "user", "content": prompt}]
+    question = grok_chat(messages, temperature=0.7)
     return question
