@@ -144,31 +144,43 @@ def evaluate_answer(
     # -----------------------------
     # Parse JSON safely
     # -----------------------------
+    import re
     try:
-
         result = json.loads(cleaned)
 
-    except Exception as e:
+    except Exception:
 
-        print(f"JSON Parse Error: {e}")
+        try:
+            json_match = re.search(
+                r"\{.*\}",
+                cleaned,
+                re.DOTALL
+            )
 
-        result = {
+            if json_match:
+                result = json.loads(
+                    json_match.group()
+                )
+            else:
+                raise ValueError(
+                    "No JSON found"
+                )
 
-            "overall_score": 0,
+        except Exception as e:
 
-            "rubric_scores": {},
+            print(
+                f"JSON Parse Error: {e}"
+            )
 
-            "strengths": [],
-
-            "weaknesses": [],
-
-            "missing_concepts": [],
-
-            "improvement": (
-                "Failed to parse model output"
-            ),
-
-            "raw_output": raw_output
-        }
+            result = {
+                "overall_score": 0,
+                "rubric_scores": {},
+                "strengths": [],
+                "weaknesses": [],
+                "missing_concepts": [],
+                "improvement":
+                    "Failed to parse model output",
+                "raw_output": raw_output
+            }
 
     return result

@@ -93,15 +93,15 @@ def evaluate_candidate_answer(
     # ---------------------------------
     result = evaluate_answer(
         question=request.question,
-
-        candidate_answer=(
-            request.candidate_answer
-        ),
-
+        candidate_answer=request.candidate_answer,
         rubric=rubric,
-
         context=context
     )
+
+    print("=" * 50)
+    print("RESULT:", result)
+    print("TYPE:", type(result))
+    print("=" * 50)
     # ---------------------------------
     # 6. Return response
     # ---------------------------------
