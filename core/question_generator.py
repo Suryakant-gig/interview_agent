@@ -1,4 +1,4 @@
-from core.grok_client import grok_chat
+from core.gemini_client import gemini_chat
 
 
 def build_question_prompt(context, difficulty="medium"):
@@ -34,5 +34,5 @@ Return ONLY the interview question."""
 def generate_question(context, difficulty="medium"):
     prompt = build_question_prompt(context=context, difficulty=difficulty)
     messages = [{"role": "user", "content": prompt}]
-    question = grok_chat(messages, temperature=0.7)
+    question = gemini_chat(messages, temperature=0.7)
     return question

@@ -1,6 +1,6 @@
 import json
 import re
-from core.grok_client import grok_chat
+from core.gemini_client import gemini_chat
 
 
 def build_evaluation_prompt(question, candidate_answer, rubric, context):
@@ -73,7 +73,7 @@ def evaluate_answer(question, candidate_answer, rubric, context):
     messages = [{"role": "user", "content": prompt}]
 
     try:
-        raw_output = grok_chat(messages, temperature=0.0)
+        raw_output = gemini_chat(messages, temperature=0.0)
     except RuntimeError as e:
         return {
             "overall_score": 0,
@@ -81,7 +81,7 @@ def evaluate_answer(question, candidate_answer, rubric, context):
             "strengths": [],
             "weaknesses": [],
             "missing_concepts": [],
-            "improvement": f"Grok API call failed: {e}",
+            "improvement": f"Gemini API call failed: {e}",
             "raw_output": ""
         }
 
